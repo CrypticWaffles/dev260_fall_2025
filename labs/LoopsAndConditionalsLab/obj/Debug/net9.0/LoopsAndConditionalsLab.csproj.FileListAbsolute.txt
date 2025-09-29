@@ -1,0 +1,15 @@
+C:\Users\Miles\Documents\School\Programing\dev260_fall_2025\labs\LoopsAndConditionalsLab\bin\Debug\net9.0\LoopsAndConditionalsLab.exe
+C:\Users\Miles\Documents\School\Programing\dev260_fall_2025\labs\LoopsAndConditionalsLab\bin\Debug\net9.0\LoopsAndConditionalsLab.deps.json
+C:\Users\Miles\Documents\School\Programing\dev260_fall_2025\labs\LoopsAndConditionalsLab\bin\Debug\net9.0\LoopsAndConditionalsLab.runtimeconfig.json
+C:\Users\Miles\Documents\School\Programing\dev260_fall_2025\labs\LoopsAndConditionalsLab\bin\Debug\net9.0\LoopsAndConditionalsLab.dll
+C:\Users\Miles\Documents\School\Programing\dev260_fall_2025\labs\LoopsAndConditionalsLab\bin\Debug\net9.0\LoopsAndConditionalsLab.pdb
+C:\Users\Miles\Documents\School\Programing\dev260_fall_2025\labs\LoopsAndConditionalsLab\obj\Debug\net9.0\LoopsAndConditionalsLab.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\Miles\Documents\School\Programing\dev260_fall_2025\labs\LoopsAndConditionalsLab\obj\Debug\net9.0\LoopsAndConditionalsLab.AssemblyInfoInputs.cache
+C:\Users\Miles\Documents\School\Programing\dev260_fall_2025\labs\LoopsAndConditionalsLab\obj\Debug\net9.0\LoopsAndConditionalsLab.AssemblyInfo.cs
+C:\Users\Miles\Documents\School\Programing\dev260_fall_2025\labs\LoopsAndConditionalsLab\obj\Debug\net9.0\LoopsAndConditionalsLab.csproj.CoreCompileInputs.cache
+C:\Users\Miles\Documents\School\Programing\dev260_fall_2025\labs\LoopsAndConditionalsLab\obj\Debug\net9.0\LoopsAndConditionalsLab.sourcelink.json
+C:\Users\Miles\Documents\School\Programing\dev260_fall_2025\labs\LoopsAndConditionalsLab\obj\Debug\net9.0\LoopsAndConditionalsLab.dll
+C:\Users\Miles\Documents\School\Programing\dev260_fall_2025\labs\LoopsAndConditionalsLab\obj\Debug\net9.0\refint\LoopsAndConditionalsLab.dll
+C:\Users\Miles\Documents\School\Programing\dev260_fall_2025\labs\LoopsAndConditionalsLab\obj\Debug\net9.0\LoopsAndConditionalsLab.pdb
+C:\Users\Miles\Documents\School\Programing\dev260_fall_2025\labs\LoopsAndConditionalsLab\obj\Debug\net9.0\LoopsAndConditionalsLab.genruntimeconfig.cache
+C:\Users\Miles\Documents\School\Programing\dev260_fall_2025\labs\LoopsAndConditionalsLab\obj\Debug\net9.0\ref\LoopsAndConditionalsLab.dll
