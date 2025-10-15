@@ -1,0 +1,10 @@
+*.vs
+*.user
+*.cache
+
+# Compiled files
+# Ignore all bin directories
+bin/
+obj/
+
+.DS_Store
