@@ -1,0 +1,5 @@
+1: Other than the dictionary which was different than my prediction the other results generallty matched my expectations. Like i thought as the list size increased exponentially the time to filter through it also rose exponentially, proving it's O(n). In contarst the hashsets time remained a near constant 0ms regardless of how the data grew, proving it's O(1).
+
+2: I'm mostly surprised by how the times for dictionary and hash had no changes regadless of how large they became. I expected them to increases at least a little as the dataset grew even as they remained O(1). the only difference was the dictionary gaining 0.0001ms at the largest dataset.
+
+3: Given a large dataset (N=100,000) and a high number of membership checks, I would choose either the HashSet<T> or the Dictionary<K,V>. Both demonstrated O(1) lookup performance. Their measured time was practically zero and did not increase as the dataset grew 100x. This constant-time performance is crucial for scalability, preventing the application from slowing down to a crawl as data volume increases
