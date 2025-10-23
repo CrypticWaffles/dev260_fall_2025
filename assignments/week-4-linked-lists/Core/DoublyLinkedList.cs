@@ -640,7 +640,7 @@ namespace Week4DoublyLinkedLists.Core
         /// </summary>
         /// <param name="index">Index to get node at (0-based)</param>
         /// <returns>Node at the specified index</returns>
-        private Node<T> GetNodeAt(int index)
+        public Node<T> GetNodeAt(int index)
         {
             // TODO: Helper Method - Implement optimized node retrieval
             // 📖 See: https://www.geeksforgeeks.org/dsa/traversal-in-doubly-linked-list/
