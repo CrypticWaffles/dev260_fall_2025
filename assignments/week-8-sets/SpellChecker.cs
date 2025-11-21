@@ -79,12 +79,46 @@ namespace Assignment8
         /// </summary>
         public bool LoadDictionary(string filename)
         {
-            // TODO: Implement dictionary loading
-            // Hint: Use File.ReadAllLines() and handle FileNotFoundException
-            // Hint: Use string.Trim() and string.ToLowerInvariant() for normalization
-            // Hint: dictionary.Add() will automatically handle duplicates
-            
-            throw new NotImplementedException("LoadDictionary method not yet implemented");
+
+            string fileToLoad = @$"Files\{filename}";
+
+            // Check if the file is not empty
+            if (!IsFileEmpty(fileToLoad))
+            {
+                try
+                {
+                    // Read all lines from the dictionary file
+                    string[] words = File.ReadAllLines(fileToLoad);
+
+                    // Loop through each word and add to the dictionary
+                    foreach (string word in words)
+                    {
+                        // Normalize the word
+                        string normalizedWord = NormalizeWord(word);
+
+                        // Add to dictionary if not empty
+                        if (!string.IsNullOrEmpty(normalizedWord))
+                        {
+                            dictionary.Add(normalizedWord);
+                        }
+                    }
+
+                    // Successfully loaded dictionary
+                    return true;
+                }
+                catch (FileNotFoundException)
+                {
+                    return false;
+                }
+                catch (Exception)
+                {
+                    return false;
+                }
+            }
+            else
+            {
+                return false;
+            }
         }
         
         /// <summary>
@@ -107,13 +141,55 @@ namespace Assignment8
         /// </summary>
         public bool AnalyzeTextFile(string filename)
         {
-            // TODO: Implement text file analysis
-            // Hint: Use File.ReadAllText() to read entire file
-            // Hint: Split on char[] { ' ', '\t', '\n', '\r' } for simple tokenization
-            // Hint: Use Regex.Replace to remove punctuation: @"[^\w\s]" -> ""
-            // Hint: Filter out empty strings after processing
-            
-            throw new NotImplementedException("AnalyzeTextFile method not yet implemented");
+            currentFileName = $@"Files\{filename}";
+
+            // Check if the file is not empty
+            if (!IsFileEmpty(currentFileName))
+            {
+                try
+                {
+                    // Read the entire content of the text file
+                    string content = File.ReadAllText(currentFileName);
+
+                    // Tokenize the content into words
+                    char[] delimiters = new char[] { ' ', '\t', '\n', '\r' };
+
+                    // Use Regex to remove punctuation
+                    string cleanedContent = Regex.Replace(content, @"[^\w\s]", "");
+
+                    // Split into tokens
+                    string[] tokens = cleanedContent.Split(delimiters, StringSplitOptions.RemoveEmptyEntries);
+
+                    // Loop through each token
+                    foreach (string token in tokens)
+                    {
+                        // Normalize the token
+                        string normalizedToken = NormalizeWord(token);
+
+                        // Add to allWordsInText
+                        allWordsInText.Add(normalizedToken);
+
+                        // Add to uniqueWordsInText
+                        uniqueWordsInText.Add(normalizedToken);
+                    }
+
+                    return true;
+                }
+                catch (FileNotFoundException)
+                {
+                    Console.WriteLine("File not found.");
+                    return false;
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine("An error occurred while analyzing the text file:" + ex);
+                    return false;
+                }
+            }
+            else
+            {
+                return false;
+            }
         }
         
         /// <summary>
@@ -133,12 +209,25 @@ namespace Assignment8
         /// </summary>
         public void CategorizeWords()
         {
-            // TODO: Implement word categorization
-            // Hint: Clear both correctlySpelledWords and misspelledWords first
-            // Hint: Use a foreach loop over uniqueWordsInText
-            // Hint: Use dictionary.Contains(word) for fast lookup
-            
-            throw new NotImplementedException("CategorizeWords method not yet implemented");
+            // Clear previous results
+            correctlySpelledWords.Clear();
+            misspelledWords.Clear();
+
+            // Iterate through unique words and categorize
+            foreach (var word in uniqueWordsInText)
+            {
+                // Check if the word is in the dictionary
+                if (dictionary.Contains(word))
+                {
+                    // Word is correctly spelled
+                    correctlySpelledWords.Add(word);
+                }
+                else
+                {
+                    // Word is misspelled
+                    misspelledWords.Add(word);
+                }
+            }
         }
         
         /// <summary>
@@ -159,12 +248,34 @@ namespace Assignment8
         /// </summary>
         public (bool inDictionary, bool inText, int occurrences) CheckWord(string word)
         {
-            // TODO: Implement individual word checking
-            // Hint: Normalize the word using the same method as other operations
-            // Hint: Use dictionary.Contains() and uniqueWordsInText.Contains()
-            // Hint: Use allWordsInText.Count(w => w.Equals(normalizedWord, StringComparison.OrdinalIgnoreCase))
-            
-            throw new NotImplementedException("CheckWord method not yet implemented");
+            // Normalize the input word
+            string normalizedWord = NormalizeWord(word);
+
+            // Handle empty input
+            if (string.IsNullOrEmpty(normalizedWord))
+            {
+                return (false, false, 0);
+            }
+
+            // Check presence in dictionary and text, and count occurrences
+            if (dictionary.Contains(normalizedWord) && uniqueWordsInText.Contains(normalizedWord))
+            {
+                return (true, true, allWordsInText.Count(w => w.Equals(normalizedWord, StringComparison.OrdinalIgnoreCase)));
+            }
+            // Word is only in the dictionary
+            else if (dictionary.Contains(normalizedWord))
+            {
+                return (true, false, 0);
+            }
+            // Word is only in the analyzed text
+            else if (uniqueWordsInText.Contains(normalizedWord))
+            {
+                return (false, true, allWordsInText.Count(w => w.Equals(normalizedWord, StringComparison.OrdinalIgnoreCase)));
+            }
+            else
+            {
+                return (false, false, 0);
+            }
         }
         
         /// <summary>
@@ -184,12 +295,29 @@ namespace Assignment8
         /// </summary>
         public List<string> GetMisspelledWords(int maxResults = 50)
         {
-            // TODO: Implement misspelled words retrieval
-            // Hint: Convert misspelledWords to List, then use OrderBy()
-            // Hint: Use Take(maxResults) to limit results if needed
-            // Hint: Return empty list if no text has been analyzed
-            
-            throw new NotImplementedException("GetMisspelledWords method not yet implemented");
+            // Check if a text has been analyzed
+            if (HasAnalyzedText)
+            {
+                // Convert HashSet to List for sorting
+                List<string> misspelledWordsList = new List<string>(misspelledWords);
+
+                // Sort the list alphabetically
+                misspelledWordsList.Sort(StringComparer.OrdinalIgnoreCase);
+
+                // Limit results if necessary
+                if (misspelledWordsList.Count > maxResults)
+                {
+                    return misspelledWordsList.Take(maxResults).ToList();
+                }
+                else
+                {
+                    return misspelledWordsList;
+                }
+            }
+            else
+            {
+                return new List<string>();
+            }
         }
         
         /// <summary>
@@ -209,11 +337,29 @@ namespace Assignment8
         /// </summary>
         public List<string> GetUniqueWordsSample(int maxResults = 20)
         {
-            // TODO: Implement unique words sample retrieval
-            // Hint: Similar to GetMisspelledWords but use uniqueWordsInText
-            // Hint: Consider showing a mix of correct and misspelled words
-            
-            throw new NotImplementedException("GetUniqueWordsSample method not yet implemented");
+            // Check if a text has been analyzed
+            if (HasAnalyzedText)
+            {
+                // Convert HashSet to List for sorting
+                List<string> uniqueWordsList = new List<string>(uniqueWordsInText);
+
+                // Sort the list alphabetically
+                uniqueWordsList.Sort(StringComparer.OrdinalIgnoreCase);
+
+                // Limit results if necessary
+                if (uniqueWordsList.Count > maxResults)
+                {
+                    return uniqueWordsList.Take(maxResults).ToList();
+                }
+                else
+                {
+                    return uniqueWordsList;
+                }
+            }
+            else
+            {
+                return new List<string>();
+            }
         }
         
         // Helper method for consistent word normalization
@@ -225,6 +371,38 @@ namespace Assignment8
             // Remove punctuation and convert to lowercase
             word = Regex.Replace(word.Trim(), @"[^\w]", "");
             return word.ToLowerInvariant();
+        }
+
+        // Heler method to check if a file is empty
+        public bool IsFileEmpty(string filePath)
+        {
+            try
+            {
+                // Create a FileInfo object for the file path
+                FileInfo fileInfo = new FileInfo(filePath);
+
+                //  Check if the file exists AND if its Length property is 0
+                if (fileInfo.Exists && fileInfo.Length == 0)
+                {
+                    return true; // File exists and is empty
+                }
+                else if (fileInfo.Exists && fileInfo.Length > 0)
+                {
+                    return false; // File exists and is NOT empty
+                }
+                else
+                {
+                    // Handle the case where the file doesn't exist
+                    Console.WriteLine($"Error: File not found at {filePath}");
+                    return false;
+                }
+            }
+            catch (Exception ex)
+            {
+                // Handle path errors or other unexpected exceptions
+                Console.WriteLine($"An error occurred: {ex.Message}");
+                return false;
+            }
         }
     }
 }
