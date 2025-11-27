@@ -77,7 +77,25 @@ namespace Assignment10
             // Hint: If not present, add to airports dictionary
             // Hint: Also initialize empty List<Flight> in routes dictionary
             
-            throw new NotImplementedException("AddAirport method not yet implemented");
+            if (airport == null || string.IsNullOrWhiteSpace(airport.Code))
+            {
+                Console.WriteLine("Invalid airport. Cannot add to network.");
+                return;
+            }
+
+            string codeUpper = airport.Code.ToUpperInvariant();
+
+            // Check if airport already exists
+            if (!airports.ContainsKey(codeUpper))
+            {
+                // Add airport to dictionary
+                airports[codeUpper] = airport;
+                if (!routes.ContainsKey(codeUpper))
+                {
+                    // Initialize empty adjacency list
+                    routes[codeUpper] = new List<Flight>();
+                }
+            }
         }
 
         /// <summary>
@@ -109,7 +127,33 @@ namespace Assignment10
             // Hint: Ensure routes dictionary has a list for origin airport
             // Hint: Add the flight to routes[origin] list
             
-            throw new NotImplementedException("AddFlight method not yet implemented");
+            if (flight == null || string.IsNullOrWhiteSpace(flight.Origin) || string.IsNullOrWhiteSpace(flight.Destination))
+            {
+                Console.WriteLine("Invalid flight. Cannot add to network.");
+                return;
+            }
+
+            string originUpper = flight.Origin.ToUpperInvariant();
+            string destinationUpper = flight.Destination.ToUpperInvariant();
+
+            if (!airports.ContainsKey(originUpper))
+            {
+                string originCity = airportCities.ContainsKey(originUpper) ? airportCities[originUpper] : "Unknown City";
+                AddAirport(new Airport(originUpper, $"{originCity} Airport", originCity));
+            }
+
+            if (!airports.ContainsKey(destinationUpper))
+            {
+                string destCity = airportCities.ContainsKey(destinationUpper) ? airportCities[destinationUpper] : "Unknown City";
+                AddAirport(new Airport(destinationUpper, $"{destCity} Airport", destCity));
+            }
+
+            if (!routes.ContainsKey(originUpper))
+            {
+                routes[originUpper] = new List<Flight>();
+            }
+
+            routes[originUpper].Add(flight);
         }
 
         /// <summary>
@@ -154,7 +198,57 @@ namespace Assignment10
             //   - Increment counter
             // Hint: Display success message with count
             
-            throw new NotImplementedException("LoadFlightsFromCSV method not yet implemented");
+            if(!File.Exists(filename))
+            {
+                throw new FileNotFoundException("The specified file was not found.", filename);
+            }
+
+            // csv file
+            string[] lines = File.ReadAllLines(filename);
+
+            if (lines.Length == 0)
+            {
+                Console.WriteLine("The CSV file is empty.");
+                return;
+            }
+
+            int flightsLoaded = 0;
+            foreach (string line in lines)
+            {
+                line.Trim();
+
+                if (string.IsNullOrEmpty(line))
+                {
+                    continue; // Skip empty lines
+                }
+
+                try
+                {
+                    string[] parts = line.Split(',');
+                    if (parts.Length < 5)
+                    {
+                        Console.WriteLine($"Invalid line format: {line}");
+                        continue; // Skip invalid lines
+                    }
+
+                    // Extract flight details
+                    string origin = parts[0].Trim();
+                    string destination = parts[1].Trim();
+                    string airline = parts[2].Trim();
+                    int duration = int.Parse(parts[3].Trim());
+                    decimal cost = decimal.Parse(parts[4].Trim());
+
+                    // Create and add flight object
+                    Flight flight = new Flight(origin, destination, airline, duration, cost);
+                    AddFlight(flight);
+                    flightsLoaded++;
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Error parsing line: {line}. Exception: {ex.Message}");
+                }
+            }
+            Console.WriteLine($"Successfully loaded {flightsLoaded} flights from {filename}.");
         }
 
         /// <summary>
@@ -184,7 +278,18 @@ namespace Assignment10
             // Hint: Use string formatting: {airport.Code,-5} for left-aligned 5 chars
             // Hint: Display: code, city name, and connection count
             
-            throw new NotImplementedException("DisplayAllAirports method not yet implemented");
+            if (airports.Count == 0)
+            {
+                Console.WriteLine("No airports in the network.");
+                return;
+            }
+
+            Console.WriteLine($"Airports in Network: {airports.Count}");
+            foreach (var airport in airports.Values.OrderBy(a => a.Code))
+            {
+                int connectionCount = routes.ContainsKey(airport.Code) ? routes[airport.Code].Count : 0;
+                Console.WriteLine($"{airport.Code,-5} - {airport.City,-20} Connections: {connectionCount}");
+            }
         }
 
         /// <summary>
@@ -214,7 +319,14 @@ namespace Assignment10
             // Hint: If found, return airports[upperCode], otherwise return null
             // Hint: Can use ternary operator: condition ? valueIfTrue : valueIfFalse
             
-            throw new NotImplementedException("GetAirport method not yet implemented");
+            if (string.IsNullOrWhiteSpace(code))
+            {
+                return null;
+            }
+
+            string codeUpper = code.ToUpperInvariant();
+
+            return airports.ContainsKey(codeUpper) ? airports[codeUpper] : null;
         }
 
         #endregion
@@ -249,7 +361,31 @@ namespace Assignment10
             // Hint: Use LINQ .Where() to filter flights by destination
             // Hint: Return empty list if origin doesn't exist or no matches found
             
-            throw new NotImplementedException("FindDirectFlights method not yet implemented");
+            // Results list
+            List<Flight> directFlights = new List<Flight>();
+
+            if (string.IsNullOrWhiteSpace(origin) || string.IsNullOrWhiteSpace(destination))
+            {
+                return directFlights; // Return empty list for invalid input
+            }
+
+            string originUpper = origin.ToUpperInvariant();
+            string destinationUpper = destination.ToUpperInvariant();
+
+            if (!routes.ContainsKey(originUpper))
+            {
+                return directFlights; // No flights from origin
+            }
+            
+            foreach (var flight in routes[originUpper])
+            {
+                if (flight.Destination.Equals(destinationUpper, StringComparison.OrdinalIgnoreCase))
+                {
+                    directFlights.Add(flight);
+                }
+            }
+
+            return directFlights;
         }
 
         /// <summary>
@@ -307,8 +443,17 @@ namespace Assignment10
             // Hint: Check if the list is empty and return null if so
             // Hint: Use .OrderBy(f => f.Cost).First() to find minimum cost flight
             // Alternative: Use .MinBy(f => f.Cost) if available in your .NET version
-            
-            throw new NotImplementedException("FindCheapestDirectFlight method not yet implemented");
+
+            // Get all direct flights
+            List<Flight> directFlights = FindDirectFlights(origin, destination);
+
+            if (directFlights.Count == 0)
+            {
+                return null; // No direct flights available
+            }
+
+            // Return the flight with the lowest cost
+            return directFlights.OrderBy(f => f.Cost).First();
         }
 
         #endregion
