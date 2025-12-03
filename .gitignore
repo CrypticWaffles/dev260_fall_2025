@@ -8,3 +8,9 @@ bin/
 obj/
 
 .DS_Store
+
+*.dll
+
+*.exe
+
+*.pdb
