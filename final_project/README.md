@@ -1,217 +1,117 @@
-# Project Title
+# RPG Skill Planner
 
-> One-sentence summary of what this app does and who it's for.
+> A program to allow players to plan their character builds via a skill tree.
 
 ---
 
 ## What I Built (Overview)
 
-**Problem this solves:**  
-_Explain the real-world task your app supports and why it's useful (2–4 sentences)._
+**Problem this solves:**
+In complex RPGs, players often struggle to plan their character builds because they don't know what prerequisites are needed for high-level abilities. This tool allows a user to map out skills, define dependencies, and simulate the unlocking process to ensure a build is valid.
 
-**Your Answer:**
-
-**Core features:**  
-_List the main features your application provides (Add, Search, List, Update, Delete, etc.)_
-
-**Your Answer:**
-
--
--
--
--
+**Core features:**
+- **Create Skills:** Define skills with names, descriptions, and costs.
+- **Link Dependencies:** Set rules (e.g., "Fireball" requires "Mana Flow").
+- **Simulate Unlocking:** Try to unlock skills and get feedback if requirements aren't met.
+- **Undo System:** Revert accidental unlocks using a history stack.
 
 ## How to Run
 
-**Requirements:**  
-_List required .NET version, OS requirements, and any dependencies._
-
-**Your Answer:**
+**Requirements:**
+- .NET 8.0 SDK or later
+- Windows, Mac, or Linux
 
 ```bash
 git clone <your-repo-url>
 cd <your-folder>
-dotnet build
+dotnet buildn
 ```
 
-**Run:**  
-_Provide the command to run your application._
-
-**Your Answer:**
-
-```bash
-dotnet run
-```
-
-**Sample data (if applicable):**  
-_Describe where sample data lives and how to load it (e.g., JSON file path, CSV import)._
-
-**Your Answer:**
+**Sample data:**  
+You can load sample data by typing 7 or load in the main menu. This populates the system with a Warrior and Mage skill tree for testing.
 
 ---
 
-## Using the App (Quick Start)
+# Using the App (Quick Start)
+## Typical workflow:
+1. Add Skills: Create the skills you want in your game.
+2. Add Dependencies: specificy which skills unlock others.
+3. Unlock: Attempt to unlock skills. The system will stop you if you haven't unlocked the parent skill yet.
+4. Undo: If you make a mistake, use the Undo option to step back.
 
-**Typical workflow:**  
-_Describe the typical user workflow in 2–4 steps._
-
-**Your Answer:**
-
-1.
-2.
-3.
-4.
-
-**Input tips:**  
-_Explain case sensitivity, required fields, and how common errors are handled gracefully._
-
-**Your Answer:**
+## Input tips:
+- Input is not case-sensitive ("fireball" finds "Fireball").
+- Costs default to 1 point if you enter invalid numbers.
 
 ---
 
 ## Data Structures (Brief Summary)
-
-> Full rationale goes in **DESIGN.md**. Here, list only what you used and the feature it powers.
-
-**Data structures used:**  
-_List each data structure and briefly explain what feature it powers._
-
-**Your Answer:**
-
-- `Dictionary<...>` →
-- `List<...>` →
-- `HashSet<...>` →
-- _(Add others: Queue, Stack, SortedDictionary, custom BST/Graph, etc.)_
+- Data structures used:Dictionary<string, Skill> → Powers the "Master List" for instant $O(1)$ lookups by name.
+- List<Skill> → Stores the specific dependencies for each skill.
+- Stack<string> → Powers the "Undo" feature, tracking history in Last-In-First-Out order.
 
 ---
 
 ## Manual Testing Summary
-
-> No unit tests required. Show how you verified correctness with 3–5 test scenarios.
-
 **Test scenarios:**  
-_Describe each test scenario with steps and expected results._
+**Scenario 1: Dependency Enforcement**
+**Steps:** Load sample data. Try to unlock "Meteor Swarm" immediately.
+**Expected result:** Error message stating "Requires: Fireball".
+**Actual result:** System blocked the action and displayed the correct requirement.
 
-**Your Answer:**
+**Scenario 2: Successful Unlock Chain**
+**Steps:** Unlock "Mana Flow". Then unlock "Fireball". Then unlock "Meteor Swarm".
+**Expected result:** All actions succeed.
+**Actual result:** All skills unlocked successfully.
 
-**Scenario 1: [Name]**
-
-- Steps:
-- Expected result:
-- Actual result:
-
-**Scenario 2: [Name]**
-
-- Steps:
-- Expected result:
-- Actual result:
-
-**Scenario 3: [Name]**
-
-- Steps:
-- Expected result:
-- Actual result:
-
-**Scenario 4: [Name] (optional)**
-
-- Steps:
-- Expected result:
-- Actual result:
-
-**Scenario 5: [Name] (optional)**
-
-- Steps:
-- Expected result:
-- Actual result:
+**Scenario 3: Undo Logic**
+**Steps:** Unlock "Mana Flow". Select "Undo". Try to unlock "Fireball".
+**Expected result:** "Mana Flow" becomes locked. "Fireball" fails because "Mana Flow" is locked again.
+**Actual result:** Point refunded, skill re-locked, dependency check worked correctly.
 
 ---
 
 ## Known Limitations
 
 **Limitations and edge cases:**  
-_Describe any edge cases not handled, performance caveats, or known issues._
-
-**Your Answer:**
-
--
--
+- Circular Dependencies: The system prevents simple loops (A->A), but complex loops (A->B->C->A) might need more robust graph cycle detection.
+- Persistence: Data is lost when the application closes (no database or file save).
 
 ## Comparers & String Handling
-
-**Keys comparer:**  
-_Describe what string comparer you used (e.g., StringComparer.OrdinalIgnoreCase) and why._
-
-**Your Answer:**
-
-**Normalization:**  
-_Explain how you normalize strings (trim whitespace, consistent casing, duplicate checks)._
-
-**Your Answer:**
+- Keys comparer: I used StringComparer.OrdinalIgnoreCase. This ensures that users don't have to remember if they capitalized "Fireball" or not.
+- Normalization: Inputs are .Trim()ed to remove accidental spaces.
 
 ---
 
 ## Credits & AI Disclosure
 
 **Resources:**  
-_List any articles, documentation, or code snippets you referenced or adapted._
+- Microsoft .NET Documentation (Collections)
+- C# Stack Class Documentation
 
-**Your Answer:**
-
--
-- **AI usage (if any):**  
-   _Describe what you asked AI tools, what code they influenced, and how you verified correctness._
-
-  **Your Answer:**
-
-  ***
+- **AI usage:**  
+AI was used to brainstorm ideas for the project as well as to help debug and clean up code. I verified it by running the code and looking for errors.
 
 ## Challenges and Solutions
+**Biggest challenge faced:** The hardest part was visualizing how the objects linked together. Initially, I just stored the names of dependencies, but then I realized I had to search the dictionary every time I wanted to check a requirement.
 
-**Biggest challenge faced:**  
-_Describe the most difficult part of the project - was it choosing the right data structures, implementing search functionality, handling edge cases, designing the user interface, or understanding a specific algorithm?_
+**How you solved it:** I refactored the Skill class to hold a List<Skill> (references to the actual objects). This made checking requirements much faster, though I had to be careful to ensure the referenced objects actually existed before linking them.
 
-**Your Answer:**
-
-**How you solved it:**  
-_Explain your solution approach and what helped you figure it out - research, consulting documentation, debugging with breakpoints, testing with simple examples, refactoring your design, etc._
-
-**Your Answer:**
-
-**Most confusing concept:**  
-_What was hardest to understand about data structures, algorithm complexity, key comparers, normalization, or organizing your code architecture?_
-
-**Your Answer:**
+**Most confusing concept:** Understanding the difference between List and LinkedList. I initially thought I needed LinkedList because I was building a "chain" of skills, but I learned that is usually better for general collections.
 
 ## Code Quality
+**What you're most proud of in your implementation:** I am proud of the Undo feature using the Stack. It was a simple addition, but it added a very professional "feel" to the application and demonstrated a perfect use case for that data structure.
 
-**What you're most proud of in your implementation:**  
-_Highlight the best aspect of your code - maybe your data structure choices, clean architecture, efficient algorithms, intuitive user interface, thorough error handling, or elegant solution to a complex problem._
-
-**Your Answer:**
-
-**What you would improve if you had more time:**  
-_Identify areas for potential improvement - perhaps adding more features, optimizing performance, improving error handling, adding data persistence, refactoring for better maintainability, or enhancing the user experience._
-
-**Your Answer:**
+**What you would improve if you had more time:** I would add a "Save/Load" feature using JSON serialization so users can save their skill trees to a file and load them later.
 
 ## Real-World Applications
+**How this relates to real-world systems:** This logic is exactly how package managers (like NuGet or npm) work. When you install a library, the system checks its dependencies tree to ensure you have all the required lower-level packages installed first.
 
-**How this relates to real-world systems:**  
-_Describe how your implementation connects to actual software systems - e.g., inventory management, customer databases, e-commerce platforms, social networks, task managers, or other applications in the industry._
-
-**Your Answer:**
-
-**What you learned about data structures and algorithms:**  
-_What insights did you gain about choosing appropriate data structures, performance tradeoffs, Big-O complexity in practice, the importance of good key design, or how data structures enable specific features?_
-
-**Your Answer:**
+**What you learned about data structures and algorithms:** I learned that choosing the right key for a Dictionary is crucial. By choosing the name as the key and ignoring case, I saved myself from writing dozens of lines of string comparison logic throughout the app.
 
 ## Submission Checklist
 
-- [ ] Public GitHub repository link submitted
-- [ ] README.md completed (this file)
-- [ ] DESIGN.md completed
-- [ ] Source code included and builds successfully
-- [ ] (Optional) Slide deck or 5–10 minute demo video link (unlisted)
-
-**Demo Video Link (optional):**
+- [X] Public GitHub repository link submitted
+- [X] README.md completed (this file)
+- [X] DESIGN.md completed
+- [X] Source code included and builds successfully
